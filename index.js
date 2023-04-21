@@ -33,7 +33,7 @@ passport.use(new LocalStrategy(
 
   (username, password, done) => {
     pool.query('SELECT * FROM users WHERE email = ?', [username], (error, results) => {
-      console.log('abc');
+      console.log(username, password);
       if (error) {
         return done(error);
       }
@@ -42,6 +42,7 @@ passport.use(new LocalStrategy(
       }
 
       const user = results[0];
+      console.log(user);
       if (password !== user.password) {
         return done(null, false, { message: 'Incorrect username or password.' });
       }
@@ -60,10 +61,14 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/abc' }),
+  passport.authenticate('local', { failureRedirect: '/' }),
   (req, res) => {
-    console.log(response);
-    res.redirect('/');
+    console.log(res);
+        if (error) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    res.json(results);
   }
 );
 
@@ -118,6 +123,10 @@ app.post('/login',
 //   function(req, res) {
 //     res.redirect('/~' + req.user.username);
 //   });
+
+app.get('/', function (req, res) {
+  res.send('Way To Go Bro');
+});
 
 // register
 app.get('/register', register.create)
