@@ -6,17 +6,31 @@ const user = require('./routes/users')
 const products = require('./routes/products')
 const orders = require('./routes/orders')
 const cart = require('./routes/cart')
+const checkout = require('./routes/checkout')
 const register = require('./routes/register')
 const passport = require('passport');
 const session = require('express-session');
-// const initializePassport = require('./passport-config')
+const initializePassport = require('./passport-config')
 const pool = require('./db');
-const LocalStrategy = require('passport-local').Strategy
+const flash = require('express-flash')
 
-// initializePassport();
+
+
+
+
+initializePassport(passport);
+
+app.use(session({
+  // store: pool,
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: false
+}))
+
 
 app.use(cors())
 app.use(express.json())
+app.use(flash());
 app.use(
   express.urlencoded({
     extended: true
@@ -24,53 +38,59 @@ app.use(
 )
 
 
+app.post('/login', checkAuthenticated, passport.authenticate('local', {successRedirect : '/successjson', failureFlash: true}))
 
+app.get('/successjson', function(req, res) {
+  res.send({message: 'True success!'});
+});
+
+function checkAuthenticated(req, res, next) {
+  // if (req.isAuthenticated()) {
+  //   return res.redirect('/')
+  // }
+  next();
+}
 // app.get('/', (req, res) => {
 //   res.send('failed');
 // });
 
-passport.use(new LocalStrategy(
+// passport.use(new LocalStrategy(
 
-  (username, password, done) => {
-    pool.query('SELECT * FROM users WHERE email = ?', [username], (error, results) => {
-      console.log(username, password);
-      if (error) {
-        return done(error);
-      }
-      if (results.length === 0) {
-        return done(null, false, { message: 'Incorrect username or password.' });
-      }
+//   (username, password, done) => {
+//     pool.query('SELECT * FROM users WHERE email = ?', [username], (error, results) => {
+//       console.log(username, password);
+//       if (error) {
+//         return done(error);
+//       }
+//       if (results.length === 0) {
+//         return done(null, false, { message: 'Incorrect username or password.' });
+//       }
 
-      const user = results[0];
-      console.log(user);
-      if (password !== user.password) {
-        return done(null, false, { message: 'Incorrect username or password.' });
-      }
-      return done(null, user);
-    });
-  }
-));
+//       const user = results[0];
+//       console.log(user);
+//       if (password !== user.password) {
+//         return done(null, false, { message: 'Incorrect username or password.' });
+//       }
+//       return done(null, user);
+//     });
+//   }
+// ));
 
-app.use(session({
-  store: pool,
-  secret: 'my-secret',
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.initialize())
+// app.use(passport.session())
 
-app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/' }),
-  (req, res) => {
-    console.log(res);
-        if (error) {
-      return res.status(500).json({ error: 'Internal server error' });
-    }
+// app.post('/login',
+//   passport.authenticate('local', { failureRedirect: '/' }),
+//   (req, res) => {
+//     console.log(res);
+//     const { username, password } =  req.body;
+//         if (error) {
+//       return res.status(500).json({ error: 'Internal server error' });
+//     }
 
-    res.json(results);
-  }
-);
+//     res.json(results);
+//   }
+// );
 
 // app.get('/users', passport.authenticate('local', { session: false }), (req, res) => {
 //   db.query('SELECT * FROM users', (error, results) => {
@@ -85,7 +105,7 @@ app.post('/login',
 
 
 
-//login
+// login
 // app.get('/login', login.?) 
 // app.post('http://localhost:3000/login/password', (req, res) => {
 //   res.send('Logged in');
@@ -140,6 +160,7 @@ app.put('/updateuser/:id', user.updateUser)
 
 /*products*/
 app.get('/products', products.getProducts)
+app.get('/getProduct/:id', products.getOneProduct)
 app.post('/addproduct', products.createProduct)
 app.delete('/deleteproduct/:id', products.deleteProduct)
 app.put('/updateproduct/:id', products.updateProducts)
@@ -155,6 +176,12 @@ app.get('/cart', cart.getCart)
 app.post('/addtocart', cart.addToCart)
 app.delete('/deletecart/:id', cart.deleteCart)
 app.put('/updatecart/:id', cart.updateCart)
+
+// checkout
+app.get('/getCheckout', checkout.getCheckout)
+app.post('/postCheckout', checkout.postCheckout)
+app.delete('/deleteCheckout', checkout.deleteCheckout)
+app.put('/updateCheckout', checkout.deleteCheckout)
 
 
 app.listen(port, () => console.log(`Example backend API listening on port ${port}!`))

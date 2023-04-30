@@ -1,44 +1,90 @@
-const { authenticate } = require('passport')
 const pool = require('./db.js')
 const crypto = require('crypto');
-const LocalStrategy = require('passport-local')
-const bcrypt = require('bcrypt')
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 const passport = require('passport');
+// const passport = require('passport');
 
 // const user = {
 //     usernameField: ;
 //     passwordField: 'bcrypt-hashed-password';
 // }
 
-const initializePassport = () => {
-    
-passport.use(new LocalStrategy(
-    function (username, password, done) {
-      console.log(username, password)
-        pool.query(`SELECT * FROM users WHERE email = $1`, [username], function(err, user) {
-        if(err) return done(err);
-  
-        if(!user) return done(null, false);
-  
-        if(user.password != password) return done(null, false);
-  
-        return done(null, user)
-      });
-    })
-  );
+function getUserByEmail(email) {
+  pool.query(`SELECT * FROM users WHERE email = $1`, [email], function(err, user) {
+    if(err) return null;
+    console.log('2', user.rows[0]);
+    if(!user) return null;
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
-  
-  passport.deserializeUser((id, done) => {
-    db.users.findById(id, function (err, user) {
-      if (err) return done(err); 
-      done(null, user);
-    });
-  });
+    return user.rows[0]
+  })
+}
+
+async function initializePassport(passport) {
+
+    const authenticateUser = async (email, password, done) => {
+      // const user = getUserByEmail(email);
+      // console.log('1', user);
+      pool.query(`SELECT * FROM users WHERE email = $1`, [email], function(err, res) {
+        if(err) return null;
+        // console.log('2', user.rows[0]);
+        if(!res.rows[0]) return null;
+    
+        // return user.rows[0]
+        const user = res.rows[0];
+        if (user == null) {
+          return done(null, false, {message: 'No user found'})
+        } try {
+          if (password != user.password) {
+            return done(null, false, {message: 'password is incorrect'})
+          } else {
+            console.log('3', res)
+            return done(null, res)
+          }
+        } catch(err) {
+          console.log(err)
+          return done(err)
+        }
+      })
+
+    }
+
+passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser));
+passport.serializeUser((user, done) => done(null, user))
+passport.deserializeUser((id, done) => done(null, getUserById(id)))
 
 }
+
+ module.exports = initializePassport
+
+
+// passport.use(new LocalStrategy(
+//     function (username, password, done) {
+//       console.log(username, password)
+//         pool.query(`SELECT * FROM users WHERE email = $1`, [username], function(err, user) {
+//         if(err) return done(err);
+  
+//         if(!user) return done(null, false);
+  
+//         if(user.password != password) return done(null, false);
+  
+//         return done(null, user)
+//       });
+//     })
+//   );
+
+//   passport.serializeUser((user, done) => {
+//     done(null, user.id);
+//   });
+  
+//   passport.deserializeUser((id, done) => {
+//     db.users.findById(id, function (err, user) {
+//       if (err) return done(err); 
+//       done(null, user);
+//     });
+//   });
+
+// }
 
 
 
@@ -119,4 +165,4 @@ passport.use(new LocalStrategy(
 //    return hash === hashVerify;
 // }
 
-module.exports = {initializePassport};
+// module.exports = {initializePassport};

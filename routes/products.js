@@ -15,6 +15,18 @@ const getProducts = (req, res) => {
     })
 }
 
+// get one product
+const getOneProduct = (req, res) => {
+    const productId = req.params.id;
+    pool.query(`SELECT * FROM products WHERE product_id = $1`, [productId], (error, result) => {
+        if (error) {
+            console.log(error)
+            throw error;
+        }
+    res.send(result.rows);
+    })
+}
+
 //post products
 const createProduct = (req, res) => {
     console.log(req.body);
@@ -64,4 +76,4 @@ const updateProducts = (req, res) => {
     } )
 }
 
-module.exports = { getProducts, createProduct, deleteProduct, updateProducts };
+module.exports = { getProducts, createProduct, deleteProduct, updateProducts, getOneProduct };
