@@ -14,6 +14,7 @@ const initializePassport = require('./passport-config')
 const pool = require('./db');
 const flash = require('express-flash')
 
+
 initializePassport(passport);
 
 app.use(session({
@@ -41,10 +42,12 @@ app.get('/successjson', function(req, res) {
 });
 
 function checkAuthenticated(req, res, next) {
-  // if (req.isAuthenticated()) {
-  //   return res.redirect('/')
-  // }
-  next();
+  // console.log('rabbit', req)
+  if (req.user == undefined) {
+    return res.send({message: 'logged in'})
+  } else {
+    next();
+  }
 }
 
 app.get('/', function (req, res) {
@@ -54,6 +57,26 @@ app.get('/', function (req, res) {
 // register
 app.get('/register', register.create)
 app.post('/register', register.create)
+
+// login
+app.get('/checkedLoggedIn', function (req, res) {
+  console.log(req.session)
+  if (req.user) {
+    return res.send({message: true})
+  } else {
+    res.send({message: false})
+  }
+})
+
+//logout
+app.get('/logout', function (req, res) {req.session.destroy((error) => {
+  if (error) {
+    console.log('dogs', error);
+  }
+  res.send({message: 'logged out'})
+} )} )
+
+
 
 /*users*/
 app.get('/users', user.getUsers)

@@ -36,6 +36,7 @@ async function initializePassport(passport) {
           return done(null, false, {message: 'No user found'})
         } try {
           if (password != user.password) {
+            console.log('bad password')
             return done(null, false, {message: 'password is incorrect'})
           } else {
             console.log('3', res)
