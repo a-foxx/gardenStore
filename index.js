@@ -14,10 +14,6 @@ const initializePassport = require('./passport-config')
 const pool = require('./db');
 const flash = require('express-flash')
 
-
-
-
-
 initializePassport(passport);
 
 app.use(session({
@@ -50,99 +46,6 @@ function checkAuthenticated(req, res, next) {
   // }
   next();
 }
-// app.get('/', (req, res) => {
-//   res.send('failed');
-// });
-
-// passport.use(new LocalStrategy(
-
-//   (username, password, done) => {
-//     pool.query('SELECT * FROM users WHERE email = ?', [username], (error, results) => {
-//       console.log(username, password);
-//       if (error) {
-//         return done(error);
-//       }
-//       if (results.length === 0) {
-//         return done(null, false, { message: 'Incorrect username or password.' });
-//       }
-
-//       const user = results[0];
-//       console.log(user);
-//       if (password !== user.password) {
-//         return done(null, false, { message: 'Incorrect username or password.' });
-//       }
-//       return done(null, user);
-//     });
-//   }
-// ));
-
-// app.use(passport.initialize())
-// app.use(passport.session())
-
-// app.post('/login',
-//   passport.authenticate('local', { failureRedirect: '/' }),
-//   (req, res) => {
-//     console.log(res);
-//     const { username, password } =  req.body;
-//         if (error) {
-//       return res.status(500).json({ error: 'Internal server error' });
-//     }
-
-//     res.json(results);
-//   }
-// );
-
-// app.get('/users', passport.authenticate('local', { session: false }), (req, res) => {
-//   db.query('SELECT * FROM users', (error, results) => {
-//     if (error) {
-//       return res.status(500).json({ error: 'Internal server error' });
-//     }
-
-//     res.json(results);
-//   });
-// });
-
-
-
-
-// login
-// app.get('/login', login.?) 
-// app.post('http://localhost:3000/login/password', (req, res) => {
-//   res.send('Logged in');
-// })
-
-
-// app.get("/login/password",
-//   passport.authenticate(initializePassport, { failureRedirect : "/"}),
-//   (req, res) => {
-    
-//   }
-// );
-
-// app.get("/profile", (req, res) => {
-//   res.render("profile", { user: req.user });
-// }); 
-
-
-// app.use(initializePassport());
-
-// app.use(session({
-//   secret:'my-secret',
-//   resave: false,
-//   saveUninitialized: false,
-// }));
-// app.use(passport.initialize());
-// app.use(passport.session());
-
-// // passport.use(new LocalStrategy({ usernameField: 'email' }), authenticateUser)
-
-// passport.use(initializePassport.initialize());
-
-// app.post('/login/password',
-//   passport.authenticate('local', { failureRedirect: '/', failureMessage: true }),
-//   function(req, res) {
-//     res.redirect('/~' + req.user.username);
-//   });
 
 app.get('/', function (req, res) {
   res.send('Way To Go Bro');
