@@ -42,17 +42,12 @@ app.get('/successjson', function(req, res) {
 });
 
 function checkAuthenticated(req, res, next) {
-  // console.log('rabbit', req)
   if (req.user == undefined) {
     return res.send({message: 'logged in'})
   } else {
     next();
   }
 }
-
-app.get('/', function (req, res) {
-  res.send('Way To Go Bro');
-});
 
 // register
 app.get('/register', register.create)
@@ -61,7 +56,7 @@ app.post('/register', register.create)
 // login
 app.get('/checkedLoggedIn', function (req, res) {
   console.log(req.session)
-  if (req.user) {
+  if (req.session) {
     return res.send({message: true})
   } else {
     res.send({message: false})
@@ -69,12 +64,15 @@ app.get('/checkedLoggedIn', function (req, res) {
 })
 
 //logout
-app.get('/logout', function (req, res) {req.session.destroy((error) => {
+app.get('/logout', function (req, res) {
+  req.session.destroy((error) => {
   if (error) {
-    console.log('dogs', error);
+    console.log(error);
   }
   res.send({message: 'logged out'})
-} )} )
+    } 
+  )} 
+)
 
 
 
