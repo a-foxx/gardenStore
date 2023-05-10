@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
 app.use(cors());
-app.use(passport.authentication('session'));
+// app.use(passport.authentication('session'));
 // app.use(session());
 app.use(session({
   secret: 'keyboard cat',
@@ -35,35 +35,42 @@ app.use(session({
 app.use(passport.initialize());  
 
 app.post(
-    "/auth/signup",
+  "/auth/signup",
     passport.authenticate("local-signup", { session: false }),
     (req, res, next) => {
-      res.json({
-        user: req.user,
-      });
+    res.json({
+      user: req.user,
+    });
     }
   );
   
   app.post(
-    "/auth/login",
-    passport.authenticate("local", { session: false }),
-    (req, res, next) => {
-      console.log('hello')
+    "/auth/login",
+    passport.authenticate("local", { session: false }),
+    (req, res, next) => {
+      console.log('hello', req.session)
       res.json({ user: req.user });
       
-    }
-  );
-
-// router.post('/login', checkAuthenticated, passport.authenticate('local', {successRedirect : '/successjson', failureFlash: true}))
-
-// router.get('/successjson', function(req, res) {
-//   res.send({message: 'True success!'});
-// });
-
-// function checkAuthenticated(req, res, next) {
-//   if (!req.user) {
-//     res.render('home');
-//     res.send({message: 'failed login'})
+    }
+    );
+    
+    app.post('/logout', function(req, res, next){
+      req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/Home');
+      });
+    });
+    
+    // router.post('/login', checkAuthenticated, passport.authenticate('local', {successRedirect : '/successjson', failureFlash: true}))
+    
+    // router.get('/successjson', function(req, res) {
+      //   res.send({message: 'True success!'});
+      // });
+      
+      // function checkAuthenticated(req, res, next) {
+        //   if (!req.user) {
+          //     res.render('home');
+          //     res.send({message: 'failed login'})
 //   } else {
 //     next();
 //   }
@@ -94,12 +101,6 @@ app.post('/register', register.create)
 //   )} 
 // )
 
-app.post('/logout', function(req, res, next){
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/Home');
-  });
-});
 
 
 /*users*/
