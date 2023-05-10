@@ -1,12 +1,16 @@
 const { Pool } = require('pg');
+const { user, host, database, password, port } = require("./passport/db-config");
+
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'rest-api-p2',
-  password: 'postgres',
-  port: 5432
+  user,  
+  host,
+  database,
+  password,  
+  port
 });
+
+pool.connect();
 
 // pool.query(
 
