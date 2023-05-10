@@ -31,3 +31,6 @@ const create = async (req, res) => {
 
 
 module.exports = { create }
+
+
+'passport returning user on login. Needs  session, logout fixed doesnt decrypt hashed passwords for login'

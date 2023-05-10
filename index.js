@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
 app.use(cors());
-// app.use(passport.authentication('session'));
+app.use(passport.authentication('session'));
 // app.use(session());
 app.use(session({
   secret: 'keyboard cat',
