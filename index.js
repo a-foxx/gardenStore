@@ -25,10 +25,12 @@ app.use(flash());
 app.use(cors());
 // app.use(passport.authentication('session'));
 // app.use(session());
+// app.use(passport.session());
 app.use(session({
   secret: 'keyboard cat',
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
+  cookie: { secure: true }
   // store: pool
 }));
 
@@ -56,8 +58,8 @@ app.post(
     
     app.post('/logout', function(req, res, next){
       req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/Home');
+        if (err) { return next(err), console.log('error'); }
+        res.redirect('http://localhost:3001/Home');
       });
     });
     
@@ -100,8 +102,6 @@ app.post('/register', register.create)
 //     } 
 //   )} 
 // )
-
-
 
 /*users*/
 app.get('/users', user.getUsers)

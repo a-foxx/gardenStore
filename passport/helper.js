@@ -28,6 +28,7 @@ const createError = require('http-errors');
 const login = async (data) => {
 
   const { email, password } = data;
+  // const data = req.body;
 
   try {
     // Check if user exists
@@ -39,13 +40,12 @@ const login = async (data) => {
     }
 
     // Check for matching passwords
-    // const match = await bcrypt.compare(password, hashPassword);
-    // if(password === hashPassword) 
-    // return match
+    const match = await bcrypt.compare(password, user.password);
+    if(!match) {
+      return 
+      // res.status(400).json({ message: "Invalid password or email" });
+    } 
 
-    if (user.password !== password) {
-      throw createError(401, 'Incorrect username or password2');
-    }
 
     return user;
 

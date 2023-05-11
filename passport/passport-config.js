@@ -19,7 +19,10 @@ module.exports = (app) => {
   });
 
   // Configure local strategy to be use for local login
-  passport.use(new LocalStrategy(
+  passport.use(new LocalStrategy({
+      usernameField: "email",
+      passwordField: "password",  
+      },
     async (username, password, done) => {
       try {
         const user = await login({ email: username, password });
