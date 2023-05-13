@@ -14,7 +14,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 // var csrf = require('csurf');
 var logger = require('morgan');
-var router = express.Router();
+// var router = express.Router();
 require("./passport/passport-config")(passport);
 var passport = require('passport');
 app.use(logger('dev'));
@@ -23,9 +23,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
 app.use(cors());
-// app.use(passport.authentication('session'));
-// app.use(session());
-// app.use(passport.session());
 app.use(session({
   secret: 'keyboard cat',
   resave: false, // don't save session if unmodified
@@ -38,7 +35,7 @@ app.use(passport.initialize());
 
 app.post(
   "/auth/signup",
-    passport.authenticate("local-signup", { session: false }),
+    passport.authenticate("local-signup", {successRedirect : '/successjson', failureFlash: true}),
     (req, res, next) => {
     res.json({
       user: req.user,
@@ -48,7 +45,7 @@ app.post(
   
   app.post(
     "/auth/login",
-    passport.authenticate("local", { session: false }),
+    passport.authenticate("local", {successRedirect : '/successjson', failureFlash: true}),
     (req, res, next) => {
       console.log('hello', req.session)
       res.json({ user: req.user });
@@ -56,18 +53,18 @@ app.post(
     }
     );
     
-    app.post('/logout', function(req, res, next){
-      req.logout(function(err) {
-        if (err) { return next(err), console.log('error'); }
-        res.redirect('http://localhost:3001/Home');
-      });
-    });
+    // app.post('/logout', function(req, res, next){
+    //   req.logout(function(err) {
+    //     if (err) { return next(err), console.log('error'); }
+    //     res.redirect('http://localhost:3001/Home');
+    //   });
+    // });
     
     // router.post('/login', checkAuthenticated, passport.authenticate('local', {successRedirect : '/successjson', failureFlash: true}))
     
-    // router.get('/successjson', function(req, res) {
-      //   res.send({message: 'True success!'});
-      // });
+    app.get('/successjson', function(req, res) {
+        res.send({message: 'True success!'});
+      });
       
       // function checkAuthenticated(req, res, next) {
         //   if (!req.user) {
@@ -93,15 +90,15 @@ app.post('/register', register.create)
 // })
 
 //logout
-// app.get('/logout', function (req, res) {
-//   req.logout((error) => {
-//   if (error) {
-//     console.log(error);
-//   }
-//   res.send({message: 'logged out'})
-//     } 
-//   )} 
-// )
+app.get('/logout', function (req, res) {
+  req.logout((error) => {
+  if (error) {
+    console.log(error);
+  }
+  res.send({message: 'logged out'})
+    } 
+  )} 
+)
 
 /*users*/
 app.get('/users', user.getUsers)

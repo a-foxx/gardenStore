@@ -4,19 +4,12 @@ const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 // const { emailExists, createUser, matchPassword } = require("./helper");
-const { login } = require("./helper");
+const { login, findOneByEmail } = require("./helper");
 
 module.exports = (app) => {
-  
-  // Set method to serialize data to store in cookie
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
-  
-  // Set method to deserialize data stored in cookie and attach to req.user
-  passport.deserializeUser((id, done) => {
-    done(null, { id });
-  });
+
+passport.serializeUser((user, done) => done(null, user))
+passport.deserializeUser((email, done) => done(null, findOneByEmail(email)))
 
   // Configure local strategy to be use for local login
   passport.use(new LocalStrategy({
@@ -126,7 +119,7 @@ module.exports = (app) => {
 
     // }
 
-// passport.use(new LocalStrategy({usernameField: 'email'}, emailExists));
+// passport.use(new LocalStrategy({usernameField: 'email'}, initializePassport));
 // passport.serializeUser((user, done) => done(null, user))
 // passport.deserializeUser((id, done) => done(null, getUserById(id)))
 

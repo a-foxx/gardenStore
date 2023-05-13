@@ -28,7 +28,6 @@ const createError = require('http-errors');
 const login = async (data) => {
 
   const { email, password } = data;
-  // const data = req.body;
 
   try {
     // Check if user exists
@@ -36,18 +35,16 @@ const login = async (data) => {
 
     // If no user found, reject
     if (!user) {
-      throw createError(401, 'Incorrect username or password1');
+      throw createError(401, 'Email not registered');
     }
 
     // Check for matching passwords
     const match = await bcrypt.compare(password, user.password);
     if(!match) {
-      return 
+      throw createError(401, 'Password incorrect')
       // res.status(400).json({ message: "Invalid password or email" });
     } 
-
-
-    return user;
+  return user;
 
   } catch(err) {
     throw createError(500, err);
@@ -55,34 +52,4 @@ const login = async (data) => {
 
 };
 
-
-
-
-// const emailExists = async (email) => {
-//     const data = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-//     if (data.rowCount == 0) return false; 
-//     return data.rows[0], console.log(data.rows[0]);
-
-//   }
-
-//   const matchPassword = async (password, hashPassword) => {
-//     const match = await bcrypt.compare(password, hashPassword);
-//     // if(password === hashPassword) 
-//     return match
-//     };
-
-//     const createUser = async (email, password) => {
-//         const salt = await bcrypt.genSalt(10);
-//         const hash = await bcrypt.hash(password, salt);
-
-//         const data = await pool.query(
-//         "INSERT INTO users(email, password) VALUES ($1, $2) RETURNING id, email, password",
-//         [email, hash]
-//         );
-    
-//         if (data.rowCount == 0) return false;
-//         return data.rows[0];
-//         };
-
-//         module.exports = { emailExists, createUser, matchPassword };
 module.exports = { login, findOneByEmail };
