@@ -14,11 +14,13 @@ const getCart = (req, res) => {
 }
 
 const addToCart = (req, res) => {
-    const {modified, created, quantity, user_id, product_id} = req.body;
+    const user_id = req.cookies.user;
+    const {created} = req.body;
+    
     pool.query(
-        `INSERT INTO carts (modified, created, quantity, user_id, product_id) VALUES (
-            $1, $2, $3, $4, $5
-        ) RETURNING *;`, [modified, created, quantity, user_id, product_id], (err, result) => {
+        `INSERT INTO carts (created, user_id) VALUES (
+            $1, $2
+        ) RETURNING *;`, [created, user_id], (err, result) => {
             if (err) {
                 throw err;
             }
@@ -45,10 +47,10 @@ const deleteCart = (req, res) => {
 }
 
 const updateCart = (req, res) => {
-    const {modified, created, quantity, user_id, product_id} = req.body;
+    const {created, user_id} = req.body;
     const cartId = req.params.id;
     pool.query(
-        `UPDATE carts SET modified = $1, created = $2, quantity = $3, user_id = $4, product_id = $5 WHERE cart_id = $6;`, [modified, created, quantity, user_id, product_id, cartId], (err, result) => {
+        `UPDATE carts SET created = $1, user_id = $2`, [created, user_id], (err, result) => {
             if (err) {
                 throw err;
             }

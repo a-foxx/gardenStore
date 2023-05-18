@@ -17,11 +17,11 @@ const createError = require('http-errors');
     if (result.rows?.length) {
       return result.rows[0]
     }
-
+console.log(result)
     return null;
 
   } catch(err) {
-    throw new Error(err);
+    throw err;
   }
 };
 

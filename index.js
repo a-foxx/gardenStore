@@ -8,34 +8,44 @@ const orders = require('./routes/orders')
 const cart = require('./routes/cart')
 const checkout = require('./routes/checkout')
 const register = require('./routes/register')
+const cartCont = require('./routes/cart-contents')
 const pool = require('./db');
 const flash = require('express-flash')
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
-// var csrf = require('csurf');
+const pgsession = require('connect-pg-simple')(session);
 var logger = require('morgan');
-// var router = express.Router();
-require("./passport/passport-config")(passport);
 var passport = require('passport');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true
+}));
+
+const store = new pgsession({
+  pool: pool,
+  tableName: 'session'
+})
+
 app.use(session({
   secret: 'keyboard cat',
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
-  cookie: { secure: true }
-  // store: pool
+  cookie: { secure: true },
+  store: store
 }));
 
 app.use(passport.initialize());  
+app.use(passport.session());
+require("./passport/passport-config")(passport);
 
 app.post(
   "/auth/signup",
-    passport.authenticate("local-signup", {successRedirect : '/successjson', failureFlash: true}),
+    passport.authenticate("local-signup", {failureFlash: true}),
     (req, res, next) => {
     res.json({
       user: req.user,
@@ -43,62 +53,74 @@ app.post(
     }
   );
   
-  app.post(
-    "/auth/login",
-    passport.authenticate("local", {successRedirect : '/successjson', failureFlash: true}),
-    (req, res, next) => {
-      console.log('hello', req.session)
-      res.json({ user: req.user });
-      
-    }
-    );
-    
-    // app.post('/logout', function(req, res, next){
-    //   req.logout(function(err) {
-    //     if (err) { return next(err), console.log('error'); }
-    //     res.redirect('http://localhost:3001/Home');
-    //   });
-    // });
-    
-    // router.post('/login', checkAuthenticated, passport.authenticate('local', {successRedirect : '/successjson', failureFlash: true}))
-    
-    app.get('/successjson', function(req, res) {
-        res.send({message: 'True success!'});
-      });
-      
-      // function checkAuthenticated(req, res, next) {
-        //   if (!req.user) {
-          //     res.render('home');
-          //     res.send({message: 'failed login'})
-//   } else {
-//     next();
-//   }
-// }
+  app.post('/auth/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err) throw err;
+      if (!user) return res.send("No User Exists");
+      else {
+        req.logIn(user, (err) => {
+          if (err) throw err;
+          console.log('Login: ', req.sessionID)
+          req.session.userId = user.id; // Save the user ID in the session
+          res.cookie('user', String(user.user_id))
+          // console.log(user.user_id)
+          req.session.save((err) => {
+            if (err) {
+              console.log('Error saving session:', err);
+            }
+            res.cookie('token', req.sessionID)
+           
+                      return res.send({message: "Successfully Authenticated", sessionId: req.sessionID});
+
+                    });
+                  })
+                }
+              })(req, res, next);
+            })
 
 // register
 app.get('/register', register.create)
 app.post('/register', register.create)
 
 // // login
-// app.get('/checkedLoggedIn', function (req, res) {
-//   console.log(req.session)
-//   if (req.session) {
-//     return res.send({message: true})
-//   } else {
-//     res.send({message: false})
-//   }
-// })
-
-//logout
-app.get('/logout', function (req, res) {
-  req.logout((error) => {
-  if (error) {
-    console.log(error);
+app.get('/checkedLoggedIn', function (req, res) {
+const userSession = req.headers.cookie?.split('token=')[1]
+pool.query(`SELECT * from session WHERE sid = $1`, [userSession], (err, result) => {
+  // console.log(session);
+  if (err) {
+    throw err; 
   }
-  res.send({message: 'logged out'})
-    } 
-  )} 
-)
+  if(result.rows.length > 0) {
+    return res.send({message: true})
+  } else {
+    return res.send({message: false})
+  }
+})
+})
+
+app.post('/logout', function(req, res, next){
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    const userSession = req.headers.cookie?.split('token=')[1]
+    pool.query(`DELETE from session WHERE sid = $1`, [userSession], (err, result) => {
+      if (err) {
+        throw err
+      } else {
+        res.clearCookie("session")
+        // return res.json({message: 'logged out'});
+      }
+    })
+    req.session.destroy((err) => {
+      if (err) {
+        return res.send({message: 'error'})
+      } else {
+        return res.json({message: 'logged out'});
+      }
+    })
+    // res.json({message: 'logged out'});
+    // res.redirect('/Home');
+  });
+});
 
 /*users*/
 app.get('/users', user.getUsers)
@@ -124,6 +146,11 @@ app.get('/cart', cart.getCart)
 app.post('/addtocart', cart.addToCart)
 app.delete('/deletecart/:id', cart.deleteCart)
 app.put('/updatecart/:id', cart.updateCart)
+
+// cart-contents
+app.get('/cart-contents', cartCont.getCartContents)
+app.get('/addCartContents', cartCont.addCartContents)
+app.get('/deleteCartContents', cartCont.deleteCartContents)
 
 // checkout
 app.get('/getCheckout', checkout.getCheckout)
