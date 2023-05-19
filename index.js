@@ -9,13 +9,15 @@ const cart = require('./routes/cart')
 const checkout = require('./routes/checkout')
 const register = require('./routes/register')
 const cartCont = require('./routes/cart-contents')
+var passport = require('passport');
+var oAuthSetup = require('./passport/oAuthSetup')
+var oAuth = require('./routes/oAuth.js')
 const pool = require('./db');
 const flash = require('express-flash')
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const pgsession = require('connect-pg-simple')(session);
 var logger = require('morgan');
-var passport = require('passport');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -77,6 +79,10 @@ app.post(
                 }
               })(req, res, next);
             })
+
+// oAuth
+app.use('/auth', oAuth)
+
 
 // register
 app.get('/register', register.create)
