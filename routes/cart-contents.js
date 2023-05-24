@@ -14,12 +14,12 @@ const getCartContents = (req, res) => {
 }
 
 const addCartContents = (req, res) => {
-    const session_id = req.cookies.token;
+    const user_id = req.cookies.user;
     const {product_id, quantity} = req.body
     pool.query(
-        `INSERT INTO cart-contents (product_id, quantity, session_id) VALUES (
+        `INSERT INTO cart-contents (product_id, quantity, user_id) VALUES (
             $1, $2, $3
-        ) RETURNING *;`, [product_id, quantity, session_id], (err, result) => {
+        ) RETURNING *;`, [product_id, quantity, user_id], (err, result) => {
             if (err) {
                 throw err;
             }

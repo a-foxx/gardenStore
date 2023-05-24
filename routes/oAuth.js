@@ -29,15 +29,29 @@ router.get('/logout', (req, res) => {
 router.get('/google',
   passport.authenticate('google', { scope: ['profile'] }));
 
-router.get('/google/callback', 
-  passport.authenticate('google', { 
-    successRedirect: 'http://localhost:3001/Home',
-    failureRedirect: '/login/failed'
-   })
-//   function(req, res) {
-//     // Successful authentication, redirect home.
-//     res.redirect('/');
-//   }
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', 
+  (err, user, info) => {
+    if (err) throw err;
+    if (!user) return res.send('No User Exists');
+    else {
+      req.logIn(user, (err) => {
+        if (err) throw err;
+        req.session.userId = user.id;
+        res.cookie('user', String(user.user_id))
+        req.session.save((err) => {
+          if (err) {
+            console.log('Error saving session:', err);
+          }
+          res.cookie('token', req.sessionID)
+            // return res.send({message: "Successfully Authenticated", sessionId: req.sessionID});
+            return res.redirect('http://localhost:3001/Home')
+          
+        });
+      })
+    }
+  })(req, res, next);
+}
   );
 
 module.exports = router;
