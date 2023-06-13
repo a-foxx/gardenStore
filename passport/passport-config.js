@@ -7,24 +7,45 @@ module.exports = function (passport) {
 
   // Configure local strategy to be use for local login
   passport.use(new LocalStrategy({
-      usernameField: "email",
-      passwordField: "password",  
-      },
-    async (email, password, done) => {
-      pool.query(`SELECT * FROM users WHERE email = $1`, [email], function(err, res) {
-        if (err) throw err;
-        if(!res) return done(null, false);
-        bcrypt.compare(password, res.rows[0].password, (err, result) => {
-          if (err) throw err;
-          if (result) {
-            return done(null, res.rows[0]);
-          } else {
-            return done(null, false);
-          }
-        });
-      })
-    }
-  ));
+    usernameField: "email",
+    passwordField: "password",  
+  },
+  async (email, password, done) => {
+    pool.query(`SELECT * FROM users WHERE email = $1`, [email], function(err, result) {
+      if (err) done(null, false);
+      if (!result.rows[0]) return done(null, false);
+      if (result.rows[0])
+      bcrypt.compare(password, result.rows[0].password, (err, passwordMatch) => {
+        if (err) done(null, false);
+        if (passwordMatch) {
+          return done(null, result.rows[0]);
+        } else {
+          return done(null, false);
+        }
+      });
+    });
+  }));
+
+  // passport.use(new LocalStrategy({
+  //     usernameField: "email",
+  //     passwordField: "password",  
+  //     },
+  //   async (email, password, done) => {
+  //     pool.query(`SELECT * FROM users WHERE email = $1`, [email], function(err, res) {
+  //       if (err) throw err;
+  //       if(!res) return done(null, false);
+  //       bcrypt.compare(password, res.rows[0].password, (err, result) => {
+  //         if (err) throw err;
+  //         if (result) {
+  //           return done(null, res.rows[0]);
+  //         } else {
+  //           result.send({message: 'Incorrect password'})
+  //           return done(null, false);
+  //         }
+  //       });
+  //     })
+  //   }
+  // ));
 
   passport.serializeUser((user, done) => {
     return done(null, user)

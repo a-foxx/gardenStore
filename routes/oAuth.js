@@ -21,17 +21,18 @@ router.get('/login/failed', (req, res) => {
     })
 })
 
-router.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/Home')
-})
+// router.get('/logout', (req, res) => {
+//     req.logout();
+//     res.redirect('/Home')
+// })
 
 router.get('/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', (req, res, next) => {
   passport.authenticate('google', 
   (err, user, info) => {
+    console.log('info', user);
     if (err) throw err;
     if (!user) return res.send('No User Exists');
     else {
@@ -39,6 +40,8 @@ router.get('/google/callback', (req, res, next) => {
         if (err) throw err;
         req.session.userId = user.id;
         res.cookie('user', String(user.user_id))
+        // res.cookie('user_id', String(user.user_id))
+        console.log(user.id);
         req.session.save((err) => {
           if (err) {
             console.log('Error saving session:', err);

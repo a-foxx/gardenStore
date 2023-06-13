@@ -1,5 +1,6 @@
 const passport = require('passport');
 const router = require('express').Router();
+const pool = require('../db')
 require("../passport/passport-config")(passport);
 
 router.post(
@@ -15,12 +16,14 @@ router.post(
 router.post('/login', (req, res, next) => {
 passport.authenticate('local', (err, user, info) => {
     if (err) throw err;
-    if (!user) return res.send("No User Exists");
+    if (!user) return res.send({message: "Incorrect, please check credentials"});
     else {
     req.logIn(user, (err) => {
-        if (err) throw err;
+      
+      
+      if (err) { res.send({message: "Incorrect, please check credentials"}) };
         console.log('Login: ', req.sessionID)
-        req.session.userId = user.id; // Save the user ID in the session
+        // req.session.userId = user.id; // Save the user ID in the session
         res.cookie('user', String(user.user_id))
         // console.log(user.user_id)
         req.session.save((err) => {
@@ -28,19 +31,19 @@ passport.authenticate('local', (err, user, info) => {
             console.log('Error saving session:', err);
         }
         res.cookie('token', req.sessionID)
-        
-                    return res.send({message: "Successfully Authenticated", sessionId: req.sessionID});
+      
+          return res.send({message: "Successfully Authenticated", sessionId: req.sessionID});
 
-                });
-                })
-            }
-            })(req, res, next);
-    })
+        });
+      })
+    }
+  })(req, res, next);
+})
 
 router.post('/logout', function(req, res, next){
   req.logout(function(err) {
     if (err) { return next(err); }
-    const userSession = req.headers.cookie?.split('token=')[1]
+    const userSession = req.cookies.token
     pool.query(`DELETE from session WHERE sid = $1`, [userSession], (err, result) => {
       if (err) {
         throw err

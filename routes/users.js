@@ -15,6 +15,26 @@ const getUsers = (req, res) => {
         })
 }
 
+// get one user
+const getUser = (req, res) => {
+    const user_id = req.cookies.user;
+    let query;
+    let queryParams;
+        query = `SELECT * FROM users WHERE user_id = $1`;
+        queryParams = [user_id];
+
+    pool.query(
+        query,
+        queryParams,
+        (err, result) => {
+            if (err) throw err;
+            res.status(200).json({
+                data: result.rows
+            });
+        }
+    );
+};
+
 // post users
 const createUser = (req, res) => {
     console.log(req.body)
@@ -64,4 +84,4 @@ const updateUser = (req, res) => {
 }
 
 
-module.exports = {createUser, getUsers, deleteUser, updateUser};
+module.exports = {createUser, getUsers, getUser, deleteUser, updateUser};

@@ -8,7 +8,6 @@ const orders = require('./routes/orders')
 const cart = require('./routes/cart')
 const checkout = require('./routes/checkout')
 const register = require('./routes/register')
-const cartCont = require('./routes/cart-contents')
 var passport = require('passport')
 var local = require('./routes/local')
 var oAuthSetup = require('./passport/oAuthSetup')
@@ -21,7 +20,7 @@ const pgsession = require('connect-pg-simple')(session);
 var logger = require('morgan');
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
 app.use(cors({
@@ -58,16 +57,17 @@ app.post('/register', register.create)
 
 // // login
 app.get('/checkedLoggedIn', function (req, res) {
-const userSession = req.headers.cookie?.split('token=')[1]
-pool.query(`SELECT * from session WHERE sid = $1`, [userSession], (err, result) => {
+  const userSession = req.cookies.token
+  pool.query(`SELECT * from session WHERE sid = $1`, [userSession], (err, result) => {
   // console.log(session);
   if (err) {
     throw err; 
   }
-  if(result.rows.length > 0) {
-    return res.send({message: true})
+  if(result.rows.length === 0) {
+    return res.status(401).send({message: false})
+
   } else {
-    return res.send({message: false})
+    return res.status(200).send({message: true})
   }
 })
 })
@@ -75,6 +75,7 @@ pool.query(`SELECT * from session WHERE sid = $1`, [userSession], (err, result) 
 
 /*users*/
 app.get('/users', user.getUsers)
+app.get('/getUser', user.getUser)
 app.post('/adduser', user.createUser)
 app.delete('/deleteuser/:id', user.deleteUser)
 app.put('/updateuser/:id', user.updateUser)
@@ -94,14 +95,11 @@ app.put('/updateorder/:id', orders.updateOrder)
 
 /*cart*/
 app.get('/cart', cart.getCart)
+app.get('/getUserCart', cart.getUsersCart)
+app.post('/checkCarts', cart.checkCartExists)
 app.post('/addtocart', cart.addToCart)
-app.delete('/deletecart/:id', cart.deleteCart)
-app.put('/updatecart/:id', cart.updateCart)
-
-// cart-contents
-app.get('/cart-contents', cartCont.getCartContents)
-app.get('/addCartContents', cartCont.addCartContents)
-app.get('/deleteCartContents', cartCont.deleteCartContents)
+app.put('/updateUserCart', cart.updateCart)
+app.put('/CartQtyIncrease', cart.increaseQty)
 
 // checkout
 app.get('/getCheckout', checkout.getCheckout)
