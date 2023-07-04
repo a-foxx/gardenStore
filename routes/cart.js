@@ -48,7 +48,7 @@ const addToCart = (req, res) => {
                 throw err;
             }
             res.status(200).json({
-                message: 'order created',
+                message: 'product added',
                 data: result.rows[0]
             })
         }
@@ -78,17 +78,31 @@ const checkCartExists = (req, res) => {
 }
 
 const deleteCart = (req, res) => {
-    const cartId = req.params.id;
+    const user_id = req.cookies.user;
+    console.log(user_id)
     pool.query(
-        `DELETE FROM carts WHERE cart_id = $1;`, [cartId], (err, result) => {
+        `DELETE FROM carts WHERE user_id = $1;`, [user_id], (err, result) => {
             if (err) {
-                throw err;
+                return res.status(500).json('Error has occurred')
             }
             res.json({
                 message: 'cart deleted'
             })
         }
     )
+}
+
+const deleteCartItem = (req, res) => {
+    const user_id = req.cookies.user;
+    const { product_id } = req.body;
+    console.log('user', user_id)
+    console.log('req.body p_id', req.body)
+    pool.query(`DELETE FROM carts WHERE user_id = $1 AND product_id = $2;`, [user_id, product_id], (error, result) => {
+        if (error) throw error
+        res.json({
+            message: 'Product removed from cart'
+        })
+    })
 }
 
 const updateCart = (req, res) => {
@@ -125,4 +139,4 @@ const increaseQty = (req, res) => {
 }
 
 
-module.exports = {increaseQty, getCart, checkCartExists, addToCart, deleteCart, updateCart, getUsersCart }
+module.exports = {increaseQty, getCart, checkCartExists, addToCart, deleteCart, updateCart, getUsersCart, deleteCartItem }

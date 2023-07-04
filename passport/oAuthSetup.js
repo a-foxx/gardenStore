@@ -30,7 +30,7 @@ passport.use(new GoogleStrategy({
           // })
         })
       } else {
-        console.log('gggg: ',res.rows[0])
+        // console.log('gggg: ',res.rows[0])
        done(null, res.rows[0])
 
       }

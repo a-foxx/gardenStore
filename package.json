@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "connect-pg-simple": "^8.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -30,6 +31,10 @@
     "passport-oauth2": "^1.7.0",
     "pg": "^8.10.0",
     "postgres": "^3.3.4",
+    "stripe": "^8.191.0",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
   }
 }

@@ -8,6 +8,7 @@ const orders = require('./routes/orders')
 const cart = require('./routes/cart')
 const checkout = require('./routes/checkout')
 const register = require('./routes/register')
+var stripeEndpoint = require('./stripeServer')
 var passport = require('passport')
 var local = require('./routes/local')
 var oAuthSetup = require('./passport/oAuthSetup')
@@ -18,15 +19,16 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const pgsession = require('connect-pg-simple')(session);
 var logger = require('morgan');
+var bodyParser = require('body-parser')
 app.use(logger('dev'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(flash());
 app.use(cors({
   origin: "http://localhost:3001",
   credentials: true
 }));
+app.use(bodyParser.json());
 
 const store = new pgsession({
   pool: pool,
@@ -49,6 +51,9 @@ app.use('/auth', local)
 
 // oAuth
 app.use('/auth', oAuth)
+
+// stripe
+app.use('/stripe', stripeEndpoint)
 
 
 // register
@@ -89,15 +94,18 @@ app.put('/updateproduct/:id', products.updateProducts)
 
 // orders
 app.get('/orders', orders.getOrders)
+app.get('/getUserOrder', orders.getUserOrder)
 app.post('/createorder', orders.createOrder)
 app.delete('/deleteorder/:id', orders.deleteOrder)
-app.put('/updateorder/:id', orders.updateOrder)
+app.put('/updateorder', orders.updateOrder)
 
 /*cart*/
 app.get('/cart', cart.getCart)
 app.get('/getUserCart', cart.getUsersCart)
 app.post('/checkCarts', cart.checkCartExists)
 app.post('/addtocart', cart.addToCart)
+app.delete('/deleteCart', cart.deleteCart)
+app.delete('/deleteCartItem', cart.deleteCartItem)
 app.put('/updateUserCart', cart.updateCart)
 app.put('/CartQtyIncrease', cart.increaseQty)
 

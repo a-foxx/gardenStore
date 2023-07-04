@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const { user, host, database, password, port } = require("./passport/db-config");
+const { user, host, database, password, port } = require("./db-config");
 
 
 const pool = new Pool({
