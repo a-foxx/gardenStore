@@ -1,8 +1,8 @@
 const { Pool } = require('pg');
 const { user, host, database, password, port } = require("./db-config");
+require('dotenv').config()
 
-
-const pool = new Pool({
+const devConfig = new Pool({
   user,  
   host,
   database,
@@ -10,75 +10,73 @@ const pool = new Pool({
   port
 });
 
-pool.connect();
+// const pool = new Pool(devConfig)
 
-// pool.query(
+//vercel
+const pool = new Pool({
 
-//     ` CREATE TABLE IF NOT EXISTS users (
-//         id              INT               PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-//         email           VARCHAR(50),      
-//         password        TEXT,
-//         firstName       VARCHAR(50),
-//         lastName        VARCHAR(50),
-//         google          JSON,
-//         facebook        JSON
-//       );
-    
-  
-//     CREATE TABLE IF NOT EXISTS products (
-//         id              INT             PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-//         name            VARCHAR(50)     NOT NULL,
-//         price           BIGINT          NOT NULL,
-//         description     VARCHAR(50)     NOT NULL,
-//         image           VARCHAR(50)     NOT NULL
-//       );
-    
-  
-//     CREATE TABLE IF NOT EXISTS orders (
-//         id              INT             PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-//         total           INT             NOT NULL,
-//         status          VARCHAR(50)     NOT NULL,
-//         userId          INT             NOT NULL,
-//         created         DATE            NOT NULL,
-//         modified        DATE            NOT NULL,
-//         FOREIGN KEY (userId) REFERENCES users(id)
-//       );
-    
-  
-//     CREATE TABLE IF NOT EXISTS orderItems (
-//         id              INT             PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-//         created         DATE            NOT NULL,
-//         orderId         INT             NOT NULL,
-//         qty             INT             NOT NULL,
-//         price           INT             NOT NULL,
-//         productId       INT             NOT NULL,
-//         name            VARCHAR(50)     NOT NULL,
-//         description     VARCHAR(200)    NOT NULL,
-//         FOREIGN KEY (orderId) REFERENCES orders(id)
-//       );
-    
-  
-//     CREATE TABLE IF NOT EXISTS carts (
-//         id              INT             PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
-//         userId          INT             NOT NULL,
-//         modified        DATE            NOT NULL,
-//         created         DATE            NOT NULL,
-//         FOREIGN KEY (userId) REFERENCES users(id)
-//       );
-    
-  
-      
-//     `,(error, response) => {
-//         if (error) {
-//             throw error;
-//         }
-//         console.log('table created successfully');
-//         pool.end;
-//     })
+  connectionString: process.env.POSTGRES_URL + "?sslmode=require",
 
+})
 
-// module.exports = {
-//   query: (text, params) => pool.query(text, params)
-// }
+pool.connect((err) => {
+  if (err) throw err
+  console.log('connected to postgreSQL successfully')
+})
 
 module.exports = pool;
+
+/*
+// pool.query(
+
+    CREATE TABLE users (
+      user_id UUID NOT NULL PRIMARY KEY,
+      email VARCHAR(50) NOT NULL,
+      password VARCHAR(150) NOT NULL,
+      first_name VARCHAR(50) NOT NULL,
+      last_name VARCHAR(150) NOT NULL,
+      g_profile_id VARCHAR(150) NOT NULL
+    )
+
+    CREATE TABLE session (
+      sid VARCHAR(150) NOT NULL PRIMARY KEY,
+      sess JSON NOT NULL,
+      expire VARCHAR(50)
+    )
+
+
+    
+  
+    CREATE TABLE IF NOT EXISTS products (
+        product_id      UUID             NOT NULL PRIMARY KEY,
+        name            VARCHAR(50)     NOT NULL,
+        price           INT             NOT NULL,
+        description     VARCHAR(100)     NOT NULL,
+        image           VARCHAR(300)     NOT NULL
+      );
+    
+  
+    CREATE TABLE orders (
+        order_id          UUID            NOT NULL PRIMARY KEY,
+        total             INT             NOT NULL,
+        status            VARCHAR(50)     NOT NULL,
+        created           VARCHAR(50)     NOT NULL,
+        user_id           UUID            NOT NULL,
+        cart_contents     JSON            NOT NULL,
+        shipping_address  VARCHAR(200)    NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+    
+    CREATE TABLE carts (
+        cart_id         UUID            NOT NULL PRIMARY KEY,
+        created         VARCHAR(50)     NOT NULL,
+        product_id      VARCHAR(150)    NOT NULL,
+        quantity        INT             NOT NULL,
+        user_id         VARCHAR(250),    
+        g_profile_id    VARCHAR(150)    
+      );
+
+
+module.exports = pool;
+
+*/

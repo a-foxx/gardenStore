@@ -1,4 +1,5 @@
 const pool = require('../db')
+const uuidv4 = require('uuid');
 
 const getCart = (req, res) => {
     pool.query(
@@ -39,11 +40,12 @@ const addToCart = (req, res) => {
     const {product_id} = req.body;
     let quantity = 1;
     const created = new Date();
+    const id = uuidv4();
 
     pool.query(
-        `INSERT INTO carts (created, product_id, quantity, user_id) VALUES (
-            $1, $2, $3, $4
-        ) RETURNING *;`, [created, product_id, quantity, user_id], (err, result) => {
+        `INSERT INTO carts (cart_id, created, product_id, quantity, user_id) VALUES (
+            $1, $2, $3, $4, $5
+        ) RETURNING *;`, [id, created, product_id, quantity, user_id], (err, result) => {
             if (err) {
                 throw err;
             }

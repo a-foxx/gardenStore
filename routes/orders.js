@@ -1,4 +1,5 @@
 const pool = require('../db')
+const uuidv4 = require('uuid');
 
 //get orders
 const getOrders = (req, res) => {
@@ -17,15 +18,15 @@ const getOrders = (req, res) => {
 const createOrder = (req, res) => {
     const created = new Date();
     const user_id = req.cookies.user;
-    //foreign key userid, cart_id
+    const id = uuidv4()
     const {total, status, cart_contents, shipAddress} = req.body;
-    console.log(req.body)
+    // console.log(req.body)
     const jsonData = JSON.stringify(cart_contents);
     pool.query(
-        `INSERT INTO orders (total, status, created, user_id, cart_contents, shipping_address)
+        `INSERT INTO orders (order_id, total, status, created, user_id, cart_contents, shipping_address)
         VALUES (
-            $1, $2, $3, $4, $5, $6
-        ) RETURNING *;`, [total, status, created, user_id, jsonData, shipAddress], (err, result) => {
+            $1, $2, $3, $4, $5, $6, $7
+        ) RETURNING *;`, [id, total, status, created, user_id, jsonData, shipAddress], (err, result) => {
             if (err) {
                 return res.status(500).json('Error has occurred')
             }
@@ -57,7 +58,7 @@ const deleteOrder = (req, res) => {
 const updateOrder = (req, res) => {
     const order_id = req.cookies.order_id;
     const {status} = req.body;
-    console.log('o_id', order_id)
+    // console.log('o_id', order_id)
     pool.query(
         `UPDATE orders SET status = $1 WHERE order_id = $2;`, [status, order_id], 
         (err, result) => {

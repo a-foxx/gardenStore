@@ -2,6 +2,7 @@ var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport');
 require('dotenv').config()
 const pool = require('../db.js');
+const uuidv4 = require('uuid');
 var GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 var GOOGLE_CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 
@@ -11,6 +12,7 @@ passport.use(new GoogleStrategy({
   callbackURL: "/auth/google/callback"
 },
   function(accessToken, refreshToken, profile, done) {
+    const id = uuidv4()
     pool.query(`SELECT * FROM users WHERE g_profile_id = $1`, [profile.id],
     (err, res) => {
       // cant access value of email object
@@ -19,18 +21,13 @@ passport.use(new GoogleStrategy({
       // if profile.id not found create entry into users table
       if (res.rows.length === 0) {
         pool.query(`INSERT INTO users 
-        (email, password, first_name, last_name, G_profile_id)
-        VALUES ($1, $2, $3, $4, $5) RETURNING *;`, 
-        [profile.emails[0].value, "", profile.name.givenName, profile.name.familyName, profile.id], (err, result) => {
+        (user_id, email, password, first_name, last_name, G_profile_id)
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`, 
+        [id, profile.emails[0].value, "", profile.name.givenName, profile.name.familyName, profile.id], (err, result) => {
           if (err) throw err;
           done(null, result.rows[0])
-          // res.status(200).json({
-          //   message: 'user created',
-          //   data: result.rows[0]
-          // })
         })
       } else {
-        // console.log('gggg: ',res.rows[0])
        done(null, res.rows[0])
 
       }

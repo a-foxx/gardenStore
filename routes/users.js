@@ -1,5 +1,6 @@
 const Pool = require('pg').pool;
 const pool = require('../db')
+const uuidv4 = require('uuid');
 
 // get users
 const getUsers = (req, res) => {
@@ -37,14 +38,14 @@ const getUser = (req, res) => {
 
 // post users
 const createUser = (req, res) => {
-    console.log(req.body)
+    const id = uuidv4();
     const {email, password, firstName, lastName} = req.body;
     
     pool.query(
-        `INSERT INTO users (email, password, first_name, last_name)
+        `INSERT INTO users (user_id, email, password, first_name, last_name)
         VALUES (
-            $1, $2, $3, $4
-        ) RETURNING *;`, [email, password, firstName, lastName], (err, result) => {
+            $1, $2, $3, $4, $5
+        ) RETURNING *;`, [id, email, password, firstName, lastName], (err, result) => {
             if(err) {
                 console.log(err)
                 throw err

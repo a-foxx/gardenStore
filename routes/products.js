@@ -1,4 +1,6 @@
 const pool = require('../db')
+const { v4: uuidv4 } = require('uuid');
+
 
 //get products
 const getProducts = (req, res) => {
@@ -26,13 +28,14 @@ const getOneProduct = (req, res) => {
 
 //post products
 const createProduct = (req, res) => {
-    console.log(req.body);
-    const {name, price, description, img_url} = req.body;
+    const id = uuidv4();
+    const {name, price, description, image} = req.body;
+    
     pool.query(
-        `INSERT INTO products (name, price, description, img_url)
+        `INSERT INTO products (product_id, name, price, description, image)
         VALUES (
-            $1, $2, $3, $4
-        ) RETURNING *;`, [name, price, description, img_url], (err, result) => {
+            $1, $2, $3, $4, $5
+        ) RETURNING *;`, [id, name, price, description, image], (err, result) => {
             if (err) {
                 console.log(err)
                 throw err

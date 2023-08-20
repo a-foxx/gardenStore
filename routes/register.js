@@ -1,11 +1,13 @@
 const bcrypt = require('bcrypt')
 const pool = require('../db')
-const express =  require('express');
+const uuidv4 = require('uuid');
 // const router = express.Router();
 // const app = express();
 
 const create = async (req, res) => {
     const {firstName, lastName, email, password} = req.body;
+    const id = uuidv4()
+
     const ifUserExists = () => {
         pool.query(`SELECT * FROM users where email = $1`, [email], (error, result) => {
             if (error) throw error;
@@ -26,10 +28,10 @@ const create = async (req, res) => {
             const password = await bcrypt.hash(req.body.password, 10);
             // console.log('Query', req.body)
             pool.query(
-                `INSERT INTO users (email, password, first_name, last_name)
+                `INSERT INTO users (user_id, email, password, first_name, last_name)
                 VALUES (
-                    $1, $2, $3, $4
-                ) RETURNING *;`, [email, password, firstName, lastName], (err, result) => {
+                    $1, $2, $3, $4, $5
+                ) RETURNING *;`, [id, email, password, firstName, lastName], (err, result) => {
                     res.status(200).json({
                         message: 'user created',
                         // data: result.rows[0]
