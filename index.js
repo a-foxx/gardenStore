@@ -28,6 +28,7 @@ app.use(cors({
   origin: "http://localhost:3001",
   credentials: true
 }));
+
 app.use(bodyParser.json());
 
 const store = new pgsession({
@@ -117,3 +118,5 @@ app.put('/updateCheckout', checkout.deleteCheckout)
 
 
 app.listen(port, () => console.log(`Example backend API listening on port ${port}!`))
+
+module.exports = app
