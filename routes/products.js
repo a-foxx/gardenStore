@@ -63,10 +63,10 @@ const deleteProduct = (req, res) => {
 
 /*update*/
 const updateProducts = (req, res) => {
-    const {name, price, description, imgurl} = req.body
+    const {name, price, description, image} = req.body
     const productId = req.params.id;
     pool.query(
-        `UPDATE products SET name = $1, price = $2, description = $3, img_url = $4 WHERE product_id = $5;`, [name, price, description, imgurl, productId], (err, result) => {
+        `UPDATE products SET name = $1, price = $2, description = $3, img_url = $4 WHERE product_id = $5;`, [name, price, description, image, productId], (err, result) => {
         if (err) {
             throw err;
         }
