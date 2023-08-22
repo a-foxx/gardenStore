@@ -1,4 +1,4 @@
-const Pool = require('pg').pool;
+// const Pool = require('pg').pool;
 const pool = require('../db')
 const uuidv4 = require('uuid');
 
