@@ -43,25 +43,25 @@ app.use(flash());
 //   credentials: true, // Allow cookies and credentials
 // }));
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Check if the origin is allowed to access the resources
-    // You can use your logic here to determine if the origin is allowed
-    // For example: if (allowedOrigins.includes(origin))
-    if (originIsAllowed) {
-      callback(null, origin);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Allow cookies and credentials
-}));
-
-
 // app.use(cors({
-//   origin: "http://localhost:3001",
-//   credentials: true
+//   origin: (origin, callback) => {
+//     // Check if the origin is allowed to access the resources
+//     // You can use your logic here to determine if the origin is allowed
+//     // For example: if (allowedOrigins.includes(origin))
+//     if (originIsAllowed) {
+//       callback(null, origin);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true, // Allow cookies and credentials
 // }));
+
+
+app.use(cors({
+  origin: "https://garden-store-frontend.vercel.app",
+  credentials: true
+}));
 
 app.use(bodyParser.json());
 
