@@ -7,7 +7,7 @@ router.post(
   "/signup",
     passport.authenticate("local-signup", {failureFlash: true}),
     (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://garden-store-frontend.vercel.app');
+    // res.header('Access-Control-Allow-Origin', 'https://garden-store-frontend.vercel.app');
     res.json({
       user: req.user,
     });

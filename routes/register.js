@@ -33,6 +33,7 @@ const create = async (req, res) => {
                 VALUES (
                     $1, $2, $3, $4, $5
                 ) RETURNING *;`, [id, email, password, firstName, lastName], (err, result) => {
+                    res.header('Access-Control-Allow-Origin', 'https://garden-store-frontend.vercel.app');
                     res.status(200).json({
                         message: 'user created',
                         // data: result.rows[0]
