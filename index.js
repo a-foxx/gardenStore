@@ -24,10 +24,29 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(flash());
+
 app.use(cors({
-  origin: "http://localhost:3001",
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    const isOriginAllowed = true;
+
+    if (isOriginAllowed) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and credentials
 }));
+
+// app.use(cors({
+//   origin: "http://localhost:3001",
+//   credentials: true
+// }));
 
 app.use(bodyParser.json());
 
