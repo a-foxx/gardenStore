@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+const Pool = require('pg').Pool
 const { user, host, database, password, port } = require("./db-config");
 require('dotenv').config()
 
