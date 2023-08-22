@@ -1,5 +1,6 @@
 const pool = require('../db')
-const uuidv4 = require('uuid');
+const { v4: uuidv4 } = require('uuid');
+
 
 //get orders
 const getOrders = (req, res) => {

@@ -2,7 +2,7 @@ var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport');
 require('dotenv').config()
 const pool = require('../db.js');
-const uuidv4 = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 var GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 var GOOGLE_CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 

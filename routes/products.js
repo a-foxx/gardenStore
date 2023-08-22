@@ -2,6 +2,7 @@ const pool = require('../db')
 const { v4: uuidv4 } = require('uuid');
 
 
+
 //get products
 const getProducts = (req, res) => {
     pool.query('SELECT * FROM products', (error, result) => {

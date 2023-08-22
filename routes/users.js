@@ -1,6 +1,7 @@
 // const Pool = require('pg').pool;
 const pool = require('../db')
-const uuidv4 = require('uuid');
+const { v4: uuidv4 } = require('uuid');
+
 
 // get users
 const getUsers = (req, res) => {
