@@ -28,9 +28,27 @@ const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 
 app.use(cors({
-  origin: "http://garden-store-frontend.vercel.app/",
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    const isOriginAllowed = true;
+
+    if (isOriginAllowed) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and credentials
 }));
+
+// app.use(cors({
+//   origin: "http://garden-store-frontend.vercel.app/",
+//   credentials: true
+// }));
 
 app.use(bodyParser.json());
 
