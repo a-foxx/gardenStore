@@ -24,12 +24,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(flash()); 
+const swaggerUI = require('swagger-ui-express')
+const swaggerJsDoc = require('swagger-jsdoc')
 
 app.use(cors({
   origin: ["https://garden-store-frontend.vercel.app", "http://localhost:3001"],
   credentials: true
 }));
-
 
 app.use(bodyParser.json());
 
@@ -120,5 +121,154 @@ app.put('/updateCheckout', checkout.deleteCheckout)
 
 
 app.listen(port, () => console.log(`Example backend API listening on port ${port}!`))
+
+// swagger docs
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+      title: 'ecommerce REST API',
+      version: '1.0.0',
+      description: 'API documentation for the To-do application',
+  },
+  host: 'https://garden-store-backend.vercel.app/',
+  basePath: '/',
+  components: {
+      schemas: {
+          users: {
+              type: 'object',
+              required: ['user_id', 'email', 'hashed_password', 'first_name', 'last_name'],
+              properties: {
+                  user_id: {
+                      type: 'uuid',
+                      description: 'uuid for each user, PUBLIC KEY'
+                  },
+                  email: {
+                      type: 'string',
+                      description: "user's email address",
+                  },
+                  hashed_password: {
+                      type: 'string',
+                      description: "user's hashed password",
+                  },
+                  first_name: {
+                    type: 'string',
+                    description: "users first name",
+                },
+                  last_name: {
+                    type: 'string',
+                    description: "users last name",
+                },
+              },
+          },
+          session: {
+              type: 'object',
+              required: ['sid', 'sess', 'expires'],
+              properties: {
+                  sid: {
+                      type: 'uuid',
+                      description: 'id for each session'
+                  },
+                  sess: {
+                      type: 'json',
+                      description: 'session data'
+                  },
+                  expires: {
+                      type: 'timestamp without time zone',
+                      description: 'expiry of session'
+                  }
+              }
+          },
+          products: {
+              type: 'object',
+              required: ['product_id', 'name', 'price', 'description', 'image'],
+              properties: {
+                product_id: {
+                  type: 'uuid',
+                  description: 'id for each product'
+                },
+                name: {
+                  type: 'string',
+                  description: 'product name'
+                },
+                price: {
+                  type: 'integer',
+                  description: 'price'
+                },
+                description: {
+                  type: 'string',
+                  description: 'product description'
+                },
+                image: {
+                  type: 'string',
+                  description: 'url of image source'
+                }
+            }
+          },
+          orders: {
+              type: 'object',
+              required: ['order_id', 'total', 'status', 'created', 'user_id', 'cart_contents'],
+              properties: {
+                order_id: {
+                  type: 'uuid',
+                  description: 'id for order'
+                },
+                total: {
+                  type: 'integer',
+                  description: 'order total cost'
+                },
+                status: {
+                  type: 'string',
+                  description: 'confirms order is paid after successful stripe payment'
+                },
+                created: {
+                  type: 'string',
+                  description: 'timestamp of creation'
+                },
+                user_id: {
+                  type: 'uuid',
+                  description: 'FOREIGN KEY references users table, to id users account'
+                },
+                cart_contents: {
+                  type: 'json',
+                  description: 'holds all the data about the purchased cart'
+                }
+              }
+          },
+          carts: {
+              type: 'object',
+              required: ['cart_id', 'created', 'product_id', 'quantity'],
+              properties: {
+                cart_id: {
+                  type: 'uuid',
+                  description: 'id for cart'
+                },
+                created: {
+                  type: 'string',
+                  description: 'timestamp for creation of cart'
+                },
+                product_id: {
+                  type: 'string',
+                  description: 'FOREIGN KEY references products table in cart'
+                },
+                quantity: {
+                  type: 'integer',
+                  description: 'quantity of product in cart'
+                }
+              }
+          }
+      },
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  apis: ['./routes/*.js'],
+};
+
+const specs = swaggerJsDoc(options);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+
 
 module.exports = app

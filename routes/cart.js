@@ -1,6 +1,46 @@
 const pool = require('../db')
 const { v4: uuidv4 } = require('uuid');
 
+// swagger
+/**
+ * @swagger
+ * /carts:
+ *   get:
+ *     summary: Get all carts
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Carts fetched successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     carts:
+ *       type: object
+ *       required:
+ *         - cart_id
+ *         - created
+ *         - product_id
+ *         - quantity
+ *       properties:
+ *         cart_id:
+ *           type: uuid
+ *           description: id for cart
+ *         created:
+ *           type: string
+ *           description: timestamp for creation of cart
+ *         product_id:
+ *           type: string
+ *           description: FOREIGN KEY references products table in cart
+ *         quantity:
+ *           type: integer
+ *           description: quantity of product in cart
+ */
 
 const getCart = (req, res) => {
     pool.query(

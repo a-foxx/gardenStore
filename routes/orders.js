@@ -1,6 +1,54 @@
 const pool = require('../db')
 const { v4: uuidv4 } = require('uuid');
 
+// swagger
+/**
+ * @swagger
+ * /orders:
+ *   get:
+ *     summary: Get all orders
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Orders fetched successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     orders:
+ *       type: object
+ *       required:
+ *         - order_id
+ *         - total
+ *         - status
+ *         - created
+ *         - user_id
+ *         - cart_contents
+ *       properties:
+ *         order_id:
+ *           type: uuid
+ *           description: id for order
+ *         total:
+ *           type: integer
+ *           description: order total cost
+ *         status:
+ *           type: string
+ *           description: confirms order is paid after successful stripe payment
+ *         created:
+ *           type: string
+ *           description: timestamp of creation
+ *         user_id:
+ *           type: uuid
+ *           description: FOREIGN KEY references users table, to id users account
+ *         cart_contents:
+ *           type: json
+ *           description: holds all the data
+*/
 
 //get orders
 const getOrders = (req, res) => {

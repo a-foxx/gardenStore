@@ -1,6 +1,52 @@
 const pool = require('../db')
 const { v4: uuidv4 } = require('uuid');
 
+// swagger
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Get all products
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Products fetched successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     products:
+ *       type: object
+ *       required:
+ *         - product_id
+ *         - name
+ *         - price
+ *         - description
+ *         - image
+ *       properties:
+ *         product_id:
+ *           type: uuid
+ *           description: id for each product
+ *         name:
+ *           type: string
+ *           description: product name
+ *         price:
+ *           type: integer
+ *           description: price
+ *         description:
+ *           type: string
+ *           description: product description
+ *         image:
+ *           type: string
+ *           description: url of image source
+ */
+
+// Your route handler for products goes here...
 
 
 //get products

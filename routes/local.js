@@ -3,6 +3,46 @@ const router = require('express').Router();
 const pool = require('../db')
 require("../passport/passport-config")(passport);
 
+// swagger for session table
+/**
+ * @swagger
+ * /sessions:
+ *   get:
+ *     summary: Get all sessions
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Sessions fetched successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     session:
+ *       type: object
+ *       required:
+ *         - sid
+ *         - sess
+ *         - expires
+ *       properties:
+ *         sid:
+ *           type: uuid
+ *           description: id for each session
+ *         sess:
+ *           type: json
+ *           description: session data
+ *         expires:
+ *           type: timestamp without time zone
+ *           description: expiry of session
+ */
+
+// Your route handler for sessions goes here...
+
+
 router.post(
   "/signup",
     passport.authenticate("local-signup", {failureFlash: true}),

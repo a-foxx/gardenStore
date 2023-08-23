@@ -2,6 +2,51 @@
 const pool = require('../db')
 const { v4: uuidv4 } = require('uuid');
 
+// swagger
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Users fetched successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     users:
+ *       type: object
+ *       required:
+ *         - user_id
+ *         - email
+ *         - hashed_password
+ *         - first_name
+ *         - last_name
+ *       properties:
+ *         user_id:
+ *           type: uuid
+ *           description: id for each user
+ *         email:
+ *           type: string
+ *           description: user's email address
+ *         hashed_password:
+ *           type: string
+ *           description: user's hashed password
+ *         first_name:
+ *           type: string
+ *           description: users first name
+ *         last_name:
+ *           type: string
+ *           description: users last name
+ */
+
 
 // get users
 const getUsers = (req, res) => {
