@@ -57,7 +57,6 @@ const getProducts = (req, res) => {
         throw error;
       }
     res.send(result.rows);
-    res.header('Access-Control-Allow-Origin', ['http://localhost:3000','https://garden-store-frontend.vercel.app']);
     })
 }
 
