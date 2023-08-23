@@ -28,7 +28,7 @@ const swaggerUI = require('swagger-ui-express')
 const swaggerJsDoc = require('swagger-jsdoc')
 
 app.use(cors({
-  origin: ["https://garden-store-frontend.vercel.app", "http://localhost:3001"],
+  origin: ["https://garden-store-frontend.vercel.app"],
   credentials: true
 }));
 
