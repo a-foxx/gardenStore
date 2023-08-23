@@ -39,7 +39,7 @@
         "rimraf": "^5.0.1",
         "stripe": "^8.191.0",
         "swagger-jsdoc": "^6.2.8",
-        "swagger-ui": "^5.4.2",
+        "swagger-ui-express": "^5.0.0",
         "uuid": "^9.0.0",
         "vercel": "^32.0.0"
     },
