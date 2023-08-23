@@ -21,7 +21,7 @@ passport.use(new GoogleStrategy({
       // if profile.id not found create entry into users table
       if (res.rows.length === 0) {
         pool.query(`INSERT INTO users 
-        (user_id, email, password, first_name, last_name, G_profile_id)
+        (user_id, email, password, first_name, last_name, g_profile_id)
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`, 
         [id, profile.emails[0].value, "", profile.name.givenName, profile.name.familyName, profile.id], (err, result) => {
           if (err) throw err;

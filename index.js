@@ -23,25 +23,26 @@ var bodyParser = require('body-parser')
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(flash());
+app.use(flash()); 
 
 app.use(cors({
-  origin: "https://garden-store-frontend.vercel.app",
+  origin: ["https://garden-store-frontend.vercel.app", "http://localhost:3001"],
   credentials: true
 }));
+
 
 app.use(bodyParser.json());
 
 const store = new pgsession({
   pool: pool,
-  tableName: 'session'
+  tableName: "session"
 })
 
 app.use(session({
   secret: 'keyboard cat',
   resave: false, // don't save session if unmodified
   saveUninitialized: false, // don't create session until something stored
-  cookie: { secure: true },
+  cookie: { secure: false },
   store: store
 }));
 

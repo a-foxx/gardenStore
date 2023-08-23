@@ -71,7 +71,7 @@ const create = async (req, res) => {
             [id, email, hashedPassword, firstName, lastName]
         );
 
-        res.header('Access-Control-Allow-Origin', 'https://garden-store-frontend.vercel.app');
+        res.header('Access-Control-Allow-Origin', ['http://localhost:3000','https://garden-store-frontend.vercel.app']);
         res.status(200).json({
             message: 'User created',
             data: insertUserResult.rows[0]
