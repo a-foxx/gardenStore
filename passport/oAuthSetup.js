@@ -13,6 +13,7 @@ passport.use(new GoogleStrategy({
 },
   function(accessToken, refreshToken, profile, done) {
     const id = uuidv4()
+    console.log('profile', profile)
     pool.query(`SELECT * FROM users WHERE g_profile_id = $1`, [profile.id],
     (err, res) => {
       // cant access value of email object
