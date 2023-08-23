@@ -72,6 +72,7 @@ const getUsersCart = async (req, res) => {
           return { ...product, ...productDetails };
         })
       );
+      res.header('Access-Control-Allow-Origin', ['http://localhost:3000','https://garden-store-frontend.vercel.app']);
       res.status(200).json(final);
     //   console.log('final: ',final);
   };
