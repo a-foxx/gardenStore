@@ -25,39 +25,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(flash());
 
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     if (!origin) {
-//       callback(null, true);
-//       return;
-//     }
-
-//     const isOriginAllowed = true;
-
-//     if (isOriginAllowed) {
-//       callback(null, origin);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true, // Allow cookies and credentials
-// }));
-
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     // Check if the origin is allowed to access the resources
-//     // You can use your logic here to determine if the origin is allowed
-//     // For example: if (allowedOrigins.includes(origin))
-//     if (originIsAllowed) {
-//       callback(null, origin);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true, // Allow cookies and credentials
-// }));
-
-
 app.use(cors({
   origin: "https://garden-store-frontend.vercel.app",
   credentials: true

@@ -48,7 +48,7 @@ router.get('/google/callback', (req, res, next) => {
           }
           res.cookie('token', req.sessionID)
             // return res.send({message: "Successfully Authenticated", sessionId: req.sessionID});
-            return res.redirect('http://localhost:3001/Home')
+            return res.redirect('https://garden-store-frontend.vercel.app/Home')
           
         });
       })

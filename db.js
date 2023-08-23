@@ -35,7 +35,7 @@ module.exports = pool;
       password VARCHAR(150) NOT NULL,
       first_name VARCHAR(50) NOT NULL,
       last_name VARCHAR(150) NOT NULL,
-      g_profile_id VARCHAR(150) NOT NULL
+      g_profile_id VARCHAR(150)
     )
 
     CREATE TABLE session (

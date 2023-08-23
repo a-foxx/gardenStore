@@ -33,6 +33,7 @@ const getUser = (req, res) => {
             res.status(200).json({
                 data: result.rows
             });
+            console.log(result)
         }
     );
 };
